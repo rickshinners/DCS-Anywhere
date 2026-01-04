@@ -16,9 +16,16 @@ parser = argparse.ArgumentParser(description="DCS-BIOS UDP Capture Tool")
 parser.add_argument("--output", type=str, default=OUTPUT_JSON_FILE, help="Output JSON file name")
 parser.add_argument("--duration", type=float, help="Capture duration in seconds (default: capture until Ctrl+C)")
 parser.add_argument("--max-frames", type=int, help="Maximum number of frames to capture")
+parser.add_argument("--overwrite", action="store_true", help="Overwrite output file if it already exists")
 args = parser.parse_args()
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+# Check if output file exists
+if os.path.exists(args.output) and not args.overwrite:
+    print(f"❌ Error: Output file '{args.output}' already exists.")
+    print(f"   Use --overwrite to overwrite the existing file, or specify a different output file with --output")
+    exit(1)
 
 # === SETUP SOCKET ===
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
